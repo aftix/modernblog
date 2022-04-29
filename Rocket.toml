@@ -1,0 +1,2 @@
+[global.databases]
+blog = { url = "./data.db" }
