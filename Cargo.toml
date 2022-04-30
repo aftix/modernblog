@@ -10,6 +10,7 @@ rocket = { git="https://github.com/SergioBenitez/Rocket", version="0.5.0-rc.1"}
 jsonwebtoken = "~7.2"
 diesel= {version="~1.4", features=["sqlite", "chrono"]}
 chrono = "~0.4"
+markdown = "~0.3"
 
 [dependencies.rocket_sync_db_pools]
 version = "0.1.0-rc.1"
