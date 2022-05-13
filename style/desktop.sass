@@ -1,0 +1,30 @@
+body
+  font-size: 14pt
+
+.login
+  position: absolute
+  display: flex
+  flex-direction: column
+  width: min(500px, 70%)
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  align-content: space-between
+
+.login input:first-child
+  margin-bottom: 20px
+  margin-top: 0px
+  height: 30px
+  border-radius: 10px
+  -moz-border-radius: 10px
+  -webkit-border-radius: 10px
+  padding: 5px
+
+.login input::-webkit-input-placeholder, .login input:-moz-placeholder, .login input::-moz-placeholder, .login input:-ms-input-placeholder
+  color: #59e
+  text-align: center
+
+.login input:last-child
+  height: 30px
+  width: 30%
+  margin: auto
