@@ -8,11 +8,13 @@ edition = "2021"
 [dependencies]
 yew = {git="https://github.com/yewstack/yew", features=["csr"]}
 yew-router = {git="https://github.com/yewstack/yew"}
-gloo = {version="~0.4", features=["futures"]}
+gloo = {version="~0.7", features=["futures"]}
 aftblog-common = {version="=0.1", git="https://github.com/aftix/aftblog-common"}
 web-sys = {version="~0.3"}
 ron = "~0.7"
 serde = {version="~1.0", features=["derive"]}
+wasm-bindgen-futures = "~0.4"
+web-log = "~1.0"
 
 [profile.dev.package."*"]
 codegen-units = 1

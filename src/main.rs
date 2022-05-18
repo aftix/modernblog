@@ -1,7 +1,8 @@
-use yew::prelude::*;
+pub const BACKEND: &'static str = "http://localhost:8000";
 
 pub mod login;
+pub mod route;
 
 fn main() {
-    yew::Renderer::<login::Login>::new().render();
+    yew::Renderer::<route::Main>::new().render();
 }
