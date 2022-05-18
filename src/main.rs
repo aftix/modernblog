@@ -5,11 +5,15 @@ extern crate rocket_sync_db_pools;
 #[macro_use]
 extern crate diesel;
 
+use rand::{Rng, SeedableRng};
 use rocket::{
     fairing::{Fairing, Info, Kind},
     response::Response,
     Data, Request,
 };
+
+pub mod auth;
+pub mod util;
 
 pub struct CORS;
 
@@ -34,13 +38,18 @@ impl Fairing for CORS {
     }
 }
 
+pub struct SessionSecret(String);
+
 #[database("blog")]
 pub struct SQLite(diesel::SqliteConnection);
 
 #[launch]
 fn rocket() -> _ {
+    let mut rng = rand_chacha::ChaChaRng::from_entropy();
+    let secret: SessionSecret = SessionSecret(Rng::gen::<u128>(&mut rng).to_string());
     rocket::build()
+        .manage(secret)
         .attach(CORS)
         .attach(SQLite::fairing())
-        .mount("/api", routes![])
+        .mount("/api", routes![auth::login_opt, auth::login])
 }

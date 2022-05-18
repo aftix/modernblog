@@ -6,11 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+aftblog-common = {git="https://github.com/aftix/aftblog-common", version="=0.1"}
 rocket = { git="https://github.com/SergioBenitez/Rocket", version="0.5.0-rc.1"}
 jsonwebtoken = "~7.2"
 diesel= {version="~1.4", features=["sqlite", "chrono"]}
 chrono = "~0.4"
 markdown = "~0.3"
+rand = "~0.8"
+rand_chacha = "~0.3"
+serde = "~1.0"
+ron = "~0.7"
 
 [dependencies.rocket_sync_db_pools]
 version = "0.1.0-rc.1"
