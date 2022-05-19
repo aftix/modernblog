@@ -2,16 +2,16 @@ use crate::{
     route::{AuthenticationCtx, Route},
     BACKEND,
 };
-use aftblog_common::auth::*;
-use gloo::{net::http::Request, timers::callback::Interval};
-use wasm_bindgen_futures::spawn_local;
+use aftblog_common::auth::{AuthToken, Claim, LoginResponse};
+use futures_util::stream::StreamExt;
+use gloo::{net::http::Request, timers::future::IntervalStream};
 use web_sys::{FocusEvent, HtmlInputElement, MouseEvent};
 use yew::prelude::*;
 use yew::{props, suspense::use_future};
 use yew_router::prelude::*;
 
 #[derive(Properties, PartialEq)]
-pub struct LoginProps {
+pub struct Pass {
     pass: String,
 }
 
@@ -41,7 +41,7 @@ pub fn Login() -> Html {
     } else {
         pass.unwrap().value()
     };
-    let pass = props! { LoginProps { pass }};
+    let pass = props! { Pass { pass }};
 
     html! {
         <main>
@@ -87,6 +87,27 @@ async fn reauthenticate(jwt: &str) -> Option<(AuthToken, Claim)> {
     }
 }
 
+#[function_component]
+pub fn Reauth() -> Html {
+    let ctx = use_context::<AuthenticationCtx>().expect("No context found");
+    use_future(|| async move {
+        let ctx = ctx.clone();
+        IntervalStream::new(60 * 1000)
+            .for_each(move |_| {
+                let ctx = ctx.clone();
+                async move {
+                    let res = reauthenticate(&format!("{}", ctx.jwt.as_ref().unwrap())).await;
+                    if let Some(res) = res {
+                        ctx.dispatch(res);
+                    }
+                }
+            })
+            .await;
+    })
+    .expect("Error");
+    html! {}
+}
+
 async fn login_request(pass: &str, ctx: AuthenticationCtx) -> bool {
     web_log::println!("Login request");
     let req = Request::post(&format!("{}/api/auth/login", BACKEND)).body(pass);
@@ -113,18 +134,6 @@ async fn login_request(pass: &str, ctx: AuthenticationCtx) -> bool {
 
     if let LoginResponse::Success(jwt, claim) = resp {
         ctx.dispatch((jwt, claim));
-
-        let interval = Interval::new(4 * 60 * 1000, move || {
-            let ctx = ctx.clone();
-            spawn_local(async move {
-                let auth = reauthenticate(&format!("{}", ctx.jwt.as_ref().unwrap())).await;
-                if let Some(tup) = auth {
-                    ctx.dispatch(tup);
-                }
-            });
-        });
-        interval.forget();
-
         return true;
     }
 
@@ -132,8 +141,8 @@ async fn login_request(pass: &str, ctx: AuthenticationCtx) -> bool {
 }
 
 #[function_component]
-pub fn LoginResult(props: &LoginProps) -> HtmlResult {
-    let pass = props.pass.to_owned();
+pub fn LoginResult(props: &Pass) -> HtmlResult {
+    let pass = props.pass.clone();
     let ctx = use_context::<AuthenticationCtx>().expect("No context found");
     let res = use_future(|| async move { login_request(&pass, ctx).await })?;
 

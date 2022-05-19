@@ -1,4 +1,4 @@
-pub const BACKEND: &'static str = "http://localhost:8000";
+pub const BACKEND: &str = "http://localhost:8000";
 
 pub mod login;
 pub mod route;

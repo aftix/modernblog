@@ -1,5 +1,6 @@
 use crate::login::Login;
-use aftblog_common::auth::*;
+use crate::login::Reauth;
+use aftblog_common::auth::{AuthToken, Claim};
 use std::rc::Rc;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -33,7 +34,7 @@ impl Reducible for Authentication {
 
 pub type AuthenticationCtx = UseReducerHandle<Authentication>;
 
-#[derive(Clone, Routable, PartialEq)]
+#[derive(Clone, Routable, PartialEq, Copy)]
 pub enum Route {
     #[at("/")]
     Login,
@@ -54,12 +55,13 @@ fn switch(route: Route) -> Html {
 
 #[function_component]
 pub fn Main() -> Html {
-    let auth = use_reducer(|| Authentication::new());
+    let auth = use_reducer(Authentication::new);
 
     html! {
         <ContextProvider<AuthenticationCtx> context={auth}>
             <BrowserRouter>
                 <Switch<Route> render={switch} />
+                <Reauth />
             </BrowserRouter>
         </ContextProvider<AuthenticationCtx>>
     }
