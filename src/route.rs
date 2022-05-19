@@ -1,5 +1,7 @@
-use crate::login::Login;
-use crate::login::Reauth;
+use crate::home::Home;
+use crate::login::{Login, Reauth};
+use crate::missing::NotFound;
+use crate::new::NewPost;
 use aftblog_common::auth::{AuthToken, Claim};
 use std::rc::Rc;
 use yew::prelude::*;
@@ -40,6 +42,8 @@ pub enum Route {
     Login,
     #[at("/home")]
     Home,
+    #[at("/new")]
+    New,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -48,8 +52,9 @@ pub enum Route {
 fn switch(route: Route) -> Html {
     match route {
         Route::Login => html! { <Login /> },
-        Route::NotFound => html! { "404" },
-        Route::Home => html! { "home" },
+        Route::NotFound => html! { <NotFound /> },
+        Route::Home => html! { <Home /> },
+        Route::New => html! { <NewPost />},
     }
 }
 
@@ -61,8 +66,23 @@ pub fn Main() -> Html {
         <ContextProvider<AuthenticationCtx> context={auth}>
             <BrowserRouter>
                 <Switch<Route> render={switch} />
+                <EnsureLogin />
                 <Reauth />
             </BrowserRouter>
         </ContextProvider<AuthenticationCtx>>
     }
+}
+
+#[function_component]
+pub fn EnsureLogin() -> Html {
+    let ctx = use_context::<AuthenticationCtx>().expect("No context found");
+    let navigator = use_navigator().unwrap();
+    let route: Route = use_route().expect("No route");
+    use_effect(move || {
+        if ctx.jwt.is_none() && route != Route::Login {
+            navigator.push(&Route::Login);
+        }
+        || {}
+    });
+    html! {}
 }

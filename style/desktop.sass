@@ -1,35 +1,51 @@
+@mixin center
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+
 body
   font-size: 14pt
 
 .login
-  position: absolute
+  @include center
   display: flex
   flex-direction: column
   width: min(500px, 70%)
-  top: 50%
-  left: 50%
-  transform: translate(-50%, -50%)
   align-content: space-between
 
-.login input:first-child
-  margin-bottom: 20px
-  margin-top: 0px
-  height: 30px
-  border-radius: 10px
-  -moz-border-radius: 10px
-  -webkit-border-radius: 10px
-  padding: 5px
+  input
+    &:first-child
+      margin-bottom: 20px
+      margin-top: 0px
+      height: 30px
+      border-radius: 10px
+      -moz-border-radius: 10px
+      -webkit-border-radius: 10px
+      padding: 5px
 
-.login input::-webkit-input-placeholder, .login input:-moz-placeholder, .login input::-moz-placeholder, .login input:-ms-input-placeholder
-  color: #59e
-  text-align: center
+  &::-webkit-input-placeholder, &:-moz-placeholder, &::-moz-placeholder, &:-ms-input-placeholder
+    color: #59e
+    text-align: center
 
-.login input:nth-child(2)
-  height: 30px
-  width: 30%
-  margin: auto
+  input:nth-child(2)
+    height: 30px
+    width: 30%
+    margin: auto
 
-.login p
-  color: red
-  text-align: center
-  margin-top: 10px
+  .login
+    color: red
+    text-align: center
+    margin-top: 10px
+
+#home
+  @include center
+  display: flex
+  flex-direction: column
+  width: min(500px, 70%)
+  align-content: space-between
+
+  button
+    padding-top: 10px
+    padding-bottom: 10px
+    font-size: 30pt
