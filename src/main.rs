@@ -2,6 +2,7 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_sync_db_pools;
+#[macro_use]
 extern crate diesel;
 
 use rand::{Rng, SeedableRng};
@@ -12,6 +13,9 @@ use rocket::{
 };
 
 pub mod auth;
+pub mod posts;
+pub mod schema;
+pub mod sql;
 pub mod util;
 
 pub struct CORS;
@@ -52,6 +56,13 @@ fn rocket() -> _ {
         .attach(SQLite::fairing())
         .mount(
             "/api",
-            routes![auth::login_opt, auth::login, auth::renew_opt, auth::renew],
+            routes![
+                auth::login_opt,
+                auth::login,
+                auth::renew_opt,
+                auth::renew,
+                posts::newpost_opt,
+                posts::newpost
+            ],
         )
 }

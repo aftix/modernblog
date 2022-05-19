@@ -8,7 +8,7 @@ table! {
 
 table! {
     posts (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         title -> Text,
         body -> Text,
         draft -> Bool,
