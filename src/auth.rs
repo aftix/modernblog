@@ -1,4 +1,4 @@
-use crate::util::Ron;
+use crate::util::{Ron, User};
 use crate::SessionSecret;
 use aftblog_common::auth::*;
 use rocket::State;
@@ -35,6 +35,29 @@ pub async fn login(secret: &State<SessionSecret>, req: String) -> Ron<LoginRespo
     let now: u64 = now
         .duration_since(UNIX_EPOCH)
         .expect("shouldn't happen")
+        .as_secs();
+    let claim = Claim {
+        exp: now + 5 * 60,
+        iat: now,
+    };
+    let jwt = AuthToken::new(&claim, &secret.inner().0);
+    if jwt.is_err() {
+        return Ron::new(LoginResponse::Failure);
+    }
+
+    Ron::new(LoginResponse::Success(jwt.unwrap(), claim))
+}
+
+#[options("/auth/renew")]
+pub async fn renew_opt() -> &'static str {
+    ""
+}
+
+#[post("/auth/renew")]
+pub async fn renew(secret: &State<SessionSecret>, _user: User) -> Ron<LoginResponse> {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time moved backwards")
         .as_secs();
     let claim = Claim {
         exp: now + 5 * 60,

@@ -1,9 +1,8 @@
 table! {
     images (id) {
         id -> Nullable<Integer>,
-        location -> Text,
-        refs -> Integer,
-        hash -> Text,
+        name -> Text,
+        postid -> Integer,
     }
 }
 
@@ -14,8 +13,11 @@ table! {
         body -> Text,
         draft -> Bool,
         time -> Timestamp,
+        header -> Nullable<Text>,
     }
 }
+
+joinable!(images -> posts (postid));
 
 allow_tables_to_appear_in_same_query!(
     images,

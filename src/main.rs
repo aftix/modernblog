@@ -2,7 +2,6 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_sync_db_pools;
-#[macro_use]
 extern crate diesel;
 
 use rand::{Rng, SeedableRng};
@@ -51,5 +50,8 @@ fn rocket() -> _ {
         .manage(secret)
         .attach(CORS)
         .attach(SQLite::fairing())
-        .mount("/api", routes![auth::login_opt, auth::login])
+        .mount(
+            "/api",
+            routes![auth::login_opt, auth::login, auth::renew_opt, auth::renew],
+        )
 }
