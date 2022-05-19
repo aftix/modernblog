@@ -1,15 +1,7 @@
 use jsonwebtoken::{
     decode, encode, errors::Result, Algorithm, DecodingKey, EncodingKey, Header, Validation,
 };
-use ron;
 use std::fmt::{self, Display, Formatter};
-
-#[cfg(feature = "guards")]
-use rocket::data::{Data, FromData, Outcome, ToByteUnit};
-#[cfg(feature = "guards")]
-use rocket::http::{ContentType, Status};
-#[cfg(feature = "guards")]
-use rocket::request::Request;
 
 // Claim for JWT
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
