@@ -3,8 +3,8 @@ use crate::{
     BACKEND,
 };
 use aftblog_common::auth::{AuthToken, Claim, LoginResponse};
-use futures_util::stream::StreamExt;
-use gloo::{net::http::Request, timers::future::IntervalStream};
+use gloo::{net::http::Request, timers::future::TimeoutFuture};
+use wasm_bindgen_futures::spawn_local;
 use web_sys::{FocusEvent, HtmlInputElement, MouseEvent};
 use yew::prelude::*;
 use yew::{props, suspense::use_future};
@@ -90,26 +90,26 @@ async fn reauthenticate(jwt: &str) -> Option<(AuthToken, Claim)> {
 #[function_component]
 pub fn Reauth() -> Html {
     let ctx = use_context::<AuthenticationCtx>().expect("No context found");
-    use_future(|| async move {
-        let ctx = ctx.clone();
-        IntervalStream::new(60 * 1000)
-            .for_each(move |_| {
-                let ctx = ctx.clone();
-                async move {
-                    let res = reauthenticate(&format!("{}", ctx.jwt.as_ref().unwrap())).await;
-                    if let Some(res) = res {
-                        ctx.dispatch(res);
-                    }
-                }
-            })
-            .await;
-    })
-    .expect("Error");
+    use_effect(move || {
+        spawn_local(async move {
+            TimeoutFuture::new(60 * 1000).await;
+            let res = if let Some(ref jwt) = ctx.jwt {
+                reauthenticate(&format!("{}", jwt)).await
+            } else {
+                None
+            };
+            if let Some(res) = res {
+                ctx.dispatch(res);
+            }
+        });
+
+        || {}
+    });
+
     html! {}
 }
 
 async fn login_request(pass: &str, ctx: AuthenticationCtx) -> bool {
-    web_log::println!("Login request");
     let req = Request::post(&format!("{}/api/auth/login", BACKEND)).body(pass);
     let resp = req.send().await;
     if resp.is_err() {

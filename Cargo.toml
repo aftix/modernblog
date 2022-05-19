@@ -15,7 +15,6 @@ ron = "~0.7"
 serde = {version="~1.0", features=["derive"]}
 wasm-bindgen-futures = "~0.4"
 web-log = "~1.0"
-futures-util = "~0.3"
 
 [profile.dev.package."*"]
 codegen-units = 1
