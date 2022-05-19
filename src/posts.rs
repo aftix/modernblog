@@ -1,5 +1,9 @@
-#[cfg(feature = "gaurds")]
-use rocket::http::{ContentType, Status};
+#[cfg(feature = "guards")]
+use rocket::{
+    data::{FromData, Outcome, ToByteUnit},
+    http::{ContentType, Status},
+    Data, Request,
+};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct Post {
@@ -15,7 +19,7 @@ pub enum NewPostResponse {
     Failure,
 }
 
-#[cfg(feature = "gaurds")]
+#[cfg(feature = "guards")]
 #[rocket::async_trait]
 impl<'r> FromData<'r> for Post {
     type Error = ();
@@ -36,11 +40,11 @@ impl<'r> FromData<'r> for Post {
         let string = match data.open(limit).into_string().await {
             Ok(string) if string.is_complete() => string.into_inner(),
             Ok(_) => return Failure((Status::PayloadTooLarge, ())),
-            Err(e) => return Failure((Status::InternalServerError, ())),
+            Err(_) => return Failure((Status::InternalServerError, ())),
         };
 
         let ret = ron::de::from_str::<Post>(&string);
-        if let Some(ret) = ret {
+        if let Ok(ret) = ret {
             Success(ret)
         } else {
             Failure((Status::InternalServerError, ()))
