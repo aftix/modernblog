@@ -2,7 +2,7 @@ use crate::home::Home;
 use crate::login::{Login, Reauth};
 use crate::missing::NotFound;
 use crate::new::NewPost;
-use aftblog_common::auth::{AuthToken, Claim};
+use common::auth::{AuthToken, Claim};
 use std::rc::Rc;
 use yew::prelude::*;
 use yew_router::prelude::*;

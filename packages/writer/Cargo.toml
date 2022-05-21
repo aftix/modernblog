@@ -1,5 +1,5 @@
 [package]
-name = "aftblog-write"
+name = "writer"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,19 +9,10 @@ edition = "2021"
 yew = {git="https://github.com/yewstack/yew", features=["csr"]}
 yew-router = {git="https://github.com/yewstack/yew"}
 gloo = {version="~0.7", features=["futures"]}
-aftblog-common = {version="=0.2", git="https://github.com/aftix/aftblog-common"}
+common = {version="=0.2", path="../common"}
 web-sys = {version="~0.3"}
 ron = "~0.7"
 serde = {version="~1.0", features=["derive"]}
 wasm-bindgen-futures = "~0.4"
 web-log = "~1.0"
 
-[profile.dev.package."*"]
-codegen-units = 1
-opt-level = "z"
-
-[profile.release]
-opt-level = "z"
-panic = "abort"
-codegen-units = 1
-lto = true

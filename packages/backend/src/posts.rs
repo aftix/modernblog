@@ -1,8 +1,8 @@
 use crate::sql;
 use crate::util::{Ron, User};
 use crate::SQLite;
-use aftblog_common::posts::{NewPostResponse, Post};
 use chrono::NaiveDateTime;
+use common::posts::{NewPostResponse, Post};
 use diesel::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 

@@ -1,6 +1,6 @@
 use crate::util::{Ron, User};
 use crate::SessionSecret;
-use aftblog_common::auth::*;
+use common::auth::*;
 use rocket::State;
 use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
