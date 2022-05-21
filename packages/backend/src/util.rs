@@ -58,7 +58,7 @@ impl<'r> FromRequest<'r> for User {
         }
 
         let jwt = parts[1];
-        let token = aftblog_common::auth::AuthToken::from_jwt(jwt);
+        let token = common::auth::AuthToken::from_jwt(jwt);
         let secret = req.rocket().state::<SessionSecret>();
         if secret.is_none() {
             return request::Outcome::Failure((Status::Unauthorized, ()));

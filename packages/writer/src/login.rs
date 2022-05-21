@@ -2,7 +2,7 @@ use crate::{
     route::{AuthenticationCtx, Route},
     BACKEND,
 };
-use aftblog_common::auth::{AuthToken, Claim, LoginResponse};
+use common::auth::{AuthToken, Claim, LoginResponse};
 use gloo::{net::http::Request, timers::future::TimeoutFuture};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{FocusEvent, HtmlInputElement, MouseEvent};
