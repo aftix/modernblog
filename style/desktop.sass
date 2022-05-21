@@ -1,0 +1,51 @@
+@mixin center
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+
+body
+  font-size: 14pt
+
+.login
+  @include center
+  display: flex
+  flex-direction: column
+  width: min(500px, 70%)
+  align-content: space-between
+
+  input
+    &:first-child
+      margin-bottom: 20px
+      margin-top: 0px
+      height: 30px
+      border-radius: 10px
+      -moz-border-radius: 10px
+      -webkit-border-radius: 10px
+      padding: 5px
+
+  &::-webkit-input-placeholder, &:-moz-placeholder, &::-moz-placeholder, &:-ms-input-placeholder
+    color: #59e
+    text-align: center
+
+  input:nth-child(2)
+    height: 30px
+    width: 30%
+    margin: auto
+
+  .login
+    color: red
+    text-align: center
+    margin-top: 10px
+
+#home
+  @include center
+  display: flex
+  flex-direction: column
+  width: min(500px, 70%)
+  align-content: space-between
+
+  button
+    padding-top: 10px
+    padding-bottom: 10px
+    font-size: 30pt
