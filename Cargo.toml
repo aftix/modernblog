@@ -1,12 +1,18 @@
 [workspace]
 members = ["packages/common", "packages/backend", "packages/writer"]
 
-[profile.dev.package."*".'cfg(target = "wasm32")']
+[profile.dev]
 codegen-units = 1
 opt-level = "z"
 
-[profile.release.'cfg(target_arch = "wasm32")']
+[profile.release]
 opt-level = "z"
 panic = "abort"
 codegen-units = 1
 lto = true
+
+[profile.backend]
+inherits = "release"
+opt-level = 3
+panic = 'unwind'
+codegen-units = 16
