@@ -1,21 +1,25 @@
 @import "mixins"
 
+@keyframes growout
+    0%
+        width: 0vw
+
 .login
     @include center
     display: flex
     flex-direction: column
-    width: min(35rem, 70%)
+    width: min(35rem, 70vw)
+    height: 10vh
     align-content: space-between
+    animation: 0.5s ease 1 growout
 
     input
         &:first-child
             margin-bottom: 1.5rem
             margin-top: 0
             height: 2rem
-            border-radius: 1rem
-            -moz-border-radius: 1rem
-            -webkit-border-radius: 1rem
             padding: 0.5rem
+            box-shadow: 0 0 3px 0 #ddd
 
     input:nth-child(2)
         height: 2rem

@@ -1,5 +1,6 @@
 [workspace]
 members = ["packages/common", "packages/backend", "packages/writer"]
+default-members = ["packages/backend"]
 
 [profile.dev]
 codegen-units = 1
