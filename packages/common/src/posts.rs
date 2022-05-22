@@ -74,3 +74,13 @@ impl<'r> FromData<'r> for Post {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct PostResponse {
+    pub id: i32,
+    pub title: String,
+    pub body: String,
+    pub images: Option<Vec<String>>,
+    pub published: bool,
+    pub header: Option<String>,
+}

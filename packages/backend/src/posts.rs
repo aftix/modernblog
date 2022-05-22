@@ -2,7 +2,7 @@ use crate::sql;
 use crate::util::{Ron, User};
 use crate::SQLite;
 use chrono::NaiveDateTime;
-use common::posts::{NewPostResponse, Post};
+use common::posts::{NewPostResponse, Post, PostResponse};
 use diesel::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -11,7 +11,7 @@ pub async fn newpost_opt() -> &'static str {
     ""
 }
 
-#[post("/auth/new", data = "<req>")]
+#[post("/post/new", data = "<req>")]
 pub async fn newpost(_user: User, conn: SQLite, req: Post) -> Ron<NewPostResponse> {
     use crate::schema::images::dsl::*;
     use crate::schema::posts::dsl::*;
@@ -62,4 +62,60 @@ pub async fn newpost(_user: User, conn: SQLite, req: Post) -> Ron<NewPostRespons
     } else {
         Ron::new(NewPostResponse::Failure)
     }
+}
+
+#[options("/post/get")]
+pub fn get_opt() -> &'static str {
+    ""
+}
+
+#[get("/post/get?<published>&<get_images>")]
+pub async fn get(
+    conn: SQLite,
+    published: Option<bool>,
+    get_images: Option<bool>,
+) -> Ron<Option<Vec<PostResponse>>> {
+    use crate::schema::images::dsl::*;
+    use crate::schema::posts::dsl::*;
+
+    let result = conn
+        .run(move |c| {
+            if published.unwrap_or_default() {
+                posts.load::<sql::Post>(c)
+            } else {
+                posts.filter(draft.eq(false)).load::<sql::Post>(c)
+            }
+        })
+        .await;
+
+    if result.is_err() {
+        return Ron::new(None);
+    }
+
+    let mut my_posts: Vec<_> = result
+        .unwrap()
+        .into_iter()
+        .map(|post| PostResponse {
+            id: post.id,
+            title: post.title,
+            body: post.body,
+            published: !post.draft,
+            images: None,
+            header: post.header,
+        })
+        .collect();
+
+    if get_images.unwrap_or_default() {
+        for post in &mut my_posts {
+            let my_id = post.id;
+            let result = conn
+                .run(move |c| images.filter(postid.eq(my_id)).load::<sql::Image>(c))
+                .await;
+            if let Ok(imgs) = result {
+                post.images = Some(imgs.into_iter().map(|img| img.name).collect());
+            }
+        }
+    }
+
+    Ron::new(Some(my_posts))
 }

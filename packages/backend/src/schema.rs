@@ -1,6 +1,6 @@
 table! {
     images (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         name -> Text,
         postid -> Integer,
     }
