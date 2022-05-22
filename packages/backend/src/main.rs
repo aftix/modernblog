@@ -5,6 +5,8 @@ extern crate rocket_sync_db_pools;
 #[macro_use]
 extern crate diesel;
 
+extern crate dotenv;
+
 use rand::{Rng, SeedableRng};
 use rocket::{
     fairing::{Fairing, Info, Kind},
@@ -48,6 +50,8 @@ pub struct SQLite(diesel::SqliteConnection);
 
 #[launch]
 fn rocket() -> _ {
+    dotenv::dotenv().ok();
+
     let mut rng = rand_chacha::ChaChaRng::from_entropy();
     let secret: SessionSecret = SessionSecret(Rng::gen::<u128>(&mut rng).to_string());
     rocket::build()

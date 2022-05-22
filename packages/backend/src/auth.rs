@@ -2,7 +2,6 @@ use crate::util::{Ron, User};
 use crate::SessionSecret;
 use common::auth::*;
 use rocket::State;
-use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[options("/auth/login")]
@@ -12,22 +11,13 @@ pub async fn login_opt() -> &'static str {
 
 #[post("/auth/login", data = "<req>")]
 pub async fn login(secret: &State<SessionSecret>, req: String) -> Ron<LoginResponse> {
-    // Get password from file
-    let contents = fs::read_to_string("password");
-
-    if contents.is_err() {
-        error!("password file not found");
+    let password = std::env::var("WRITER_PASSWORD");
+    if password.is_err() {
+        error!("WRITER_PASSWORD env variable not set");
         return Ron::new(LoginResponse::Failure);
     }
-    let mut contents = contents.unwrap();
-    if contents.ends_with('\n') {
-        contents.pop();
-        if contents.ends_with('\r') {
-            contents.pop();
-        }
-    }
 
-    if contents != req {
+    if password.unwrap() != req {
         return Ron::new(LoginResponse::Failure);
     }
 
