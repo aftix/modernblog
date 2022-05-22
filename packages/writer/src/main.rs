@@ -1,4 +1,4 @@
-pub const BACKEND: &str = "http://localhost:8000";
+include!(concat!(env!("OUT_DIR"), "/api.rs"));
 
 pub mod home;
 pub mod login;
