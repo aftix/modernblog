@@ -66,7 +66,9 @@ fn rocket() -> _ {
                 auth::renew_opt,
                 auth::renew,
                 posts::newpost_opt,
-                posts::newpost
+                posts::newpost,
+                posts::get_opt,
+                posts::get,
             ],
         )
 }

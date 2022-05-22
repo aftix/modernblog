@@ -98,7 +98,6 @@ pub async fn get(
         .map(|post| PostResponse {
             id: post.id,
             title: post.title,
-            body: post.body,
             published: !post.draft,
             images: None,
             header: post.header,

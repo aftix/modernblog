@@ -1,11 +1,26 @@
 @import "mixins"
 
 #home
-    @include center
+    margin-top: 5rem
+    margin-left: auto
+    margin-right: auto
     display: flex
     flex-direction: column
     width: min(38rem, 70vw)
     align-content: space-between
+
+#new_post
+    align-self: end
+    width: 2rem
+    position: relative
+
+    svg
+        width: 100%
+        height: 100%
+        top: 0
+        left: 0
+        position: absolute
+        transform: scale(0.75)
 
 button
     padding-top: 1rem
