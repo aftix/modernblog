@@ -1,3 +1,5 @@
+include!(concat!(env!("OUT_DIR"), "/api.rs"));
+
 #[macro_use]
 extern crate rocket;
 #[macro_use]
@@ -34,7 +36,7 @@ impl Fairing for CORS {
     async fn on_request(&self, _: &mut Request<'_>, _: &mut Data<'_>) {}
 
     async fn on_response<'r>(&self, _: &'r Request<'_>, resp: &mut Response<'r>) {
-        resp.set_raw_header("Access-Control-Allow-Origin", "*");
+        resp.set_raw_header("Access-Control-Allow-Origin", FRONTEND_PATH);
         resp.set_raw_header(
             "Access-Control-Allow-Headers",
             "Content-Type, Authorization",

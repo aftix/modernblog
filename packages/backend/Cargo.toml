@@ -23,3 +23,6 @@ version = "0.1.0-rc.2"
 git = "https://github.com/SergioBenitez/Rocket"
 default-features = false
 features = ["diesel_sqlite_pool"]
+
+[build-dependencies]
+dotenv = "~0.15"
