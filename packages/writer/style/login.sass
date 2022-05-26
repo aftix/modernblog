@@ -1,11 +1,11 @@
-@import "mixins"
+@use "mixins"
 
 @keyframes growout
     0%
         width: 0vw
 
 .login
-    @include center
+    @include mixins.center
     display: flex
     flex-direction: column
     width: min(35rem, 70vw)
