@@ -54,3 +54,29 @@ jobs:
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
+  writer-test:
+    name: Writer test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        profile: minimal
+      
+      - uses: Swatinem/rust-cache@v1
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: wasm-pack
+
+      - uses: browser-actions/setup-geckodriver@latest
+      - uses: nanasess/setup-chromedriver@v1
+      
+      - name: Run Browser Tests
+        run: |
+          wasm-pack test --headless --firefox
+          wasm-pack test --headless --chromium
+        working-directory: packages/writer
