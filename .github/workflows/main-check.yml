@@ -30,6 +30,7 @@ jobs:
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
+
   clippy-release:
     name: Clippy release
     runs-on: ubuntu-latest
@@ -61,10 +62,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
-        profile: minimal
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
       
       - uses: Swatinem/rust-cache@v1
 
@@ -75,7 +76,7 @@ jobs:
 
       - uses: browser-actions/setup-geckodriver@latest
       - uses: nanasess/setup-chromedriver@v1
-      
+
       - name: Run Browser Tests
         run: |
           wasm-pack test --headless --firefox
