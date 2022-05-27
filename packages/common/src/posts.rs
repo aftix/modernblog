@@ -5,7 +5,7 @@ use rocket::{
     Data, Request,
 };
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Post {
     title: String,
     body: String,
@@ -36,7 +36,7 @@ impl Post {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, Copy, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, Copy, PartialEq, Eq)]
 pub enum NewPostResponse {
     Success(u32),
     Failure,
@@ -58,7 +58,7 @@ impl<'r> FromData<'r> for Post {
         let limit = req
             .limits()
             .get("x-new-post")
-            .unwrap_or((100000 as usize).bytes());
+            .unwrap_or_else(|| (100_000_usize).bytes());
 
         let string = match data.open(limit).into_string().await {
             Ok(string) if string.is_complete() => string.into_inner(),
@@ -75,7 +75,7 @@ impl<'r> FromData<'r> for Post {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct PostResponse {
     pub id: i32,
     pub title: String,

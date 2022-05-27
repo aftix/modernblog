@@ -1,3 +1,5 @@
+#![allow(clippy::extra_unused_lifetimes)]
+
 include!(concat!(env!("OUT_DIR"), "/api.rs"));
 
 #[macro_use]
@@ -49,6 +51,7 @@ pub struct SessionSecret(String);
 
 #[database("blog")]
 pub struct SQLite(diesel::SqliteConnection);
+
 
 #[launch]
 fn rocket() -> _ {

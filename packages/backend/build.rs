@@ -6,7 +6,7 @@ use std::path::Path;
 fn main() {
     dotenv().ok();
 
-    let api_path = env::var("FRONTEND_PATH").unwrap_or(String::from("localhost:8080"));
+    let api_path = env::var("FRONTEND_PATH").unwrap_or_else(|_| String::from("localhost:8080"));
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("api.rs");
     fs::write(
