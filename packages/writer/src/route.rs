@@ -14,7 +14,7 @@ pub struct Authentication {
 }
 
 impl Authentication {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             jwt: None,
             claim: None,

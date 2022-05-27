@@ -4,14 +4,14 @@ use jsonwebtoken::{
 use std::fmt::{self, Display, Formatter};
 
 // Claim for JWT
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub struct Claim {
     pub iat: u64,
     pub exp: u64,
 }
 
 // Session Token, JWT
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub struct AuthToken {
     jwt: String,
 }
@@ -53,7 +53,7 @@ impl AuthToken {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum LoginResponse {
     Success(AuthToken, Claim),
     Failure,
