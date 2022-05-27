@@ -80,5 +80,5 @@ jobs:
       - name: Run Browser Tests
         run: |
           wasm-pack test --headless --firefox
-          wasm-pack test --headless --chromium
+          wasm-pack test --headless --chrome
         working-directory: packages/writer

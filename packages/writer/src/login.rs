@@ -1,6 +1,7 @@
 use crate::{
     route::{AuthenticationCtx, Route},
     BACKEND,
+    util::TestContext,
 };
 use common::auth::{AuthToken, Claim, LoginResponse};
 use gloo::{net::http::Request, timers::future::TimeoutFuture};
@@ -117,7 +118,6 @@ pub fn Reauth() -> Html {
     html! {}
 }
 
-#[cfg(not(test))]
 async fn login_request(pass: &str, ctx: AuthenticationCtx) -> bool {
     let req = Request::post(&format!("{}/api/auth/login", BACKEND)).body(pass);
     let resp = req.send().await;
@@ -149,21 +149,32 @@ async fn login_request(pass: &str, ctx: AuthenticationCtx) -> bool {
     false
 }
 
-#[doc(hidden)]
-#[cfg(test)]
-pub async fn login_request(_pass: &str, _ctx: AuthenticationCtx) -> bool {
+async fn login_request_test() -> bool {
     false
+}
+
+#[hook]
+fn use_login_req(pass: String) -> Result<bool, yew::suspense::Suspension> {
+    let ctx = use_context::<TestContext>();
+    let auth_ctx = use_context::<AuthenticationCtx>().expect("No content found");
+
+    let res = use_future(|| async move {
+        if let Some(_ctx) = ctx {
+            login_request_test().await
+        } else {
+            login_request(&pass, auth_ctx).await
+        }
+    })?;
+    Ok(*res)
 }
 
 #[function_component]
 pub fn LoginResult(props: &Pass) -> HtmlResult {
-    let pass = props.pass.clone();
-    let ctx = use_context::<AuthenticationCtx>().expect("No context found");
-    let res = use_future(|| async move { login_request(&pass, ctx).await })?;
+    let res = use_login_req(props.pass.clone())?;
 
     let nav = use_navigator();
     if let Some(nav) = nav {
-        if *res {
+        if res {
             nav.push(&Route::Home);
         }
     }
@@ -178,6 +189,7 @@ mod test {
     use wasm_bindgen_test::*;
     use yew::prelude::*;
     use crate::route::{Authentication, AuthenticationCtx};
+    use crate::util::TestContext;
     use super::LoginResult;
 
     #[function_component(TestLogin)]
@@ -186,11 +198,13 @@ mod test {
 
         html! {
             <div id="result">
-                <ContextProvider<AuthenticationCtx> context={route}>
-                    <Suspense fallback={html!{}}>
-                        <LoginResult pass={""} />
-                    </Suspense>
-                </ContextProvider<AuthenticationCtx>>
+                <ContextProvider<TestContext> context={TestContext::new()}>
+                    <ContextProvider<AuthenticationCtx> context={route}>
+                        <Suspense fallback={html!{}}>
+                            <LoginResult pass={""} />
+                        </Suspense>
+                    </ContextProvider<AuthenticationCtx>>
+                </ContextProvider<TestContext>>
             </div>
         }
     }
