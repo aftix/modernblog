@@ -1,2 +1,3 @@
 [global.databases]
 blog = { url = "./data.db" }
+mock_db = { url = ":memory:" }

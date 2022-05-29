@@ -118,3 +118,13 @@ pub async fn get(
 
     Ron::new(Some(my_posts))
 }
+
+#[cfg(test)]
+mod test {
+    use rocket::local::asynchronous::Client;
+
+    #[rocket::async_test]
+    async fn get_posts() {
+        let client = crate::test::setup().await;
+    }
+}
