@@ -6,7 +6,6 @@ use rocket::{
     response::{Responder, Response, Result},
     Request,
 };
-use ron;
 use serde::Serialize;
 use std::io::Cursor;
 
