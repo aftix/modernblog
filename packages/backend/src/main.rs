@@ -1,5 +1,5 @@
-use backend::{auth, posts, SessionSecret, CORS, SQLite, rocket};
-use rocket::{launch, routes};
+use backend::rocket;
+use rocket::launch;
 
 #[launch]
 pub fn backend() -> _ {

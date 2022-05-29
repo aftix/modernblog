@@ -60,3 +60,6 @@ pub async fn renew(secret: &State<SessionSecret>, _user: User) -> Ron<LoginRespo
 
     Ron::new(LoginResponse::Success(jwt.unwrap(), claim))
 }
+
+
+// TODO: tests, fuzzing
