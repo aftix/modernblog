@@ -20,7 +20,6 @@ features = ["fuzzing"]
 # Prevent this from interfering with workspaces
 [workspace]
 members = ["."]
-
 [[bin]]
 name = "login"
 path = "fuzz_targets/login.rs"
