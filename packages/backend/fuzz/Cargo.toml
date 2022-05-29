@@ -1,0 +1,28 @@
+[package]
+name = "backend-fuzz"
+version = "0.0.0"
+authors = ["Automatically generated"]
+publish = false
+edition = "2018"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+lazy_static = "~1.4"
+rocket = { git = "https://github.com/SergioBenitez/Rocket", version = "0.5.0-rc.2" }
+
+[dependencies.backend]
+path = ".."
+features = ["fuzzing"]
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "login"
+path = "fuzz_targets/login.rs"
+test = false
+doc = false

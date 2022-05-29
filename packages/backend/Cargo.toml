@@ -17,9 +17,13 @@ rand_chacha = "~0.3"
 serde = "~1.0"
 ron = "~0.7"
 dotenvy = "~0.15"
+diesel_migrations = {version="~1.4", optional=true}
 
 [dev-dependencies]
 diesel_migrations = "~1.4"
+
+[features]
+fuzzing = ["diesel_migrations"]
 
 [dependencies.rocket_sync_db_pools]
 version = "0.1.0-rc.2"

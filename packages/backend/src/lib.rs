@@ -9,7 +9,7 @@ extern crate rocket;
 extern crate rocket_sync_db_pools;
 #[macro_use]
 extern crate diesel;
-#[cfg(test)]
+#[cfg(any(test,fuzzing))]
 #[macro_use]
 extern crate diesel_migrations;
 
@@ -25,8 +25,9 @@ pub mod posts;
 mod schema;
 mod sql;
 mod util;
-#[cfg(test)]
-mod test;
+#[doc(hidden)]
+#[cfg(any(test, fuzzing))]
+pub mod test;
 
 pub struct CORS;
 
@@ -53,11 +54,11 @@ impl Fairing for CORS {
 
 pub struct SessionSecret(pub String);
 
-#[cfg(not(test))]
+#[cfg(not(any(test, fuzzing)))]
 #[database("blog")]
 pub struct SQLite(pub diesel::SqliteConnection);
 
-#[cfg(test)]
+#[cfg(any(test, fuzzing))]
 #[database("mock_db")]
 pub struct SQLite(pub diesel::SqliteConnection);
 
