@@ -20,8 +20,8 @@ pub async fn newpost(_user: User, conn: SQLite, req: Post) -> Ron<NewPostRespons
         .duration_since(UNIX_EPOCH)
         .expect("Time moved backwards");
     let new_post = sql::NewPost {
-        title: String::from(req.title.clone()),
-        body: String::from(req.body),
+        title: req.title.clone(),
+        body: req.body,
         draft: !req.published,
         time: NaiveDateTime::from_timestamp(
             now.as_secs() as i64,
@@ -30,7 +30,7 @@ pub async fn newpost(_user: User, conn: SQLite, req: Post) -> Ron<NewPostRespons
         header: req.header,
     };
 
-    let my_title = String::from(req.title);
+    let my_title = req.title;
 
     let result = conn
         .run(move |c| diesel::insert_into(posts).values(&new_post).execute(c))
@@ -514,6 +514,4 @@ mod test {
             panic!("No posts!");
         }
     }
-
-    // TODO: Fuzz inputs
 }
