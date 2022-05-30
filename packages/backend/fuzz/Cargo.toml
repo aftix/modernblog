@@ -25,3 +25,15 @@ name = "login"
 path = "fuzz_targets/login.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "renew"
+path = "fuzz_targets/renew.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "renew_bearer"
+path = "fuzz_targets/renew_bearer.rs"
+test = false
+doc = false

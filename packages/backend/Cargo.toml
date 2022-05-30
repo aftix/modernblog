@@ -21,6 +21,8 @@ diesel_migrations = {version="~1.4", optional=true}
 
 [dev-dependencies]
 diesel_migrations = "~1.4"
+random-string = "~1.0"
+rand = "~0.8"
 
 [features]
 fuzzing = ["diesel_migrations"]

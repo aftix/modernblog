@@ -20,17 +20,17 @@ pub async fn newpost(_user: User, conn: SQLite, req: Post) -> Ron<NewPostRespons
         .duration_since(UNIX_EPOCH)
         .expect("Time moved backwards");
     let new_post = sql::NewPost {
-        title: String::from(req.title()),
-        body: String::from(req.body()),
-        draft: !req.published(),
+        title: String::from(req.title.clone()),
+        body: String::from(req.body),
+        draft: !req.published,
         time: NaiveDateTime::from_timestamp(
             now.as_secs() as i64,
             (now.as_nanos() - 1_000_000_000 * now.as_secs() as u128) as u32,
         ),
-        header: req.header(),
+        header: req.header,
     };
 
-    let my_title = String::from(req.title());
+    let my_title = String::from(req.title);
 
     let result = conn
         .run(move |c| diesel::insert_into(posts).values(&new_post).execute(c))
@@ -48,7 +48,7 @@ pub async fn newpost(_user: User, conn: SQLite, req: Post) -> Ron<NewPostRespons
         if result.is_empty() {
             Ron::new(NewPostResponse::Failure)
         } else {
-            for image in req.images() {
+            for image in req.images {
                 let new_image = sql::NewImage {
                     name: image.clone(),
                     postid: result[0].id,
@@ -121,13 +121,14 @@ pub async fn get(
 
 #[cfg(test)]
 mod test {
-    use common::posts::{NewPostResponse, PostResponse};
+    use common::posts::{NewPostResponse, PostResponse, Post};
     use rocket::http::Header;
+    use crate::test::{setup, login};
 
     // Make sure OPTIONS route passes for /api/post/get
     #[rocket::async_test]
     async fn get_posts_opt() {
-        let client = crate::test::setup().await;
+        let client = setup().await;
         let req = client.options("/api/post/get");
         let resp = req.dispatch().await; 
         assert_eq!(resp.status().code, 200);
@@ -137,7 +138,7 @@ mod test {
     // Test GET for /api/post/get
     #[rocket::async_test]
     async fn get_posts() {
-        let client = crate::test::setup().await;
+        let client = setup().await;
 
         // Getting the default should return 2 published posts, no images
         let req = client.get("/api/post/get");
@@ -287,7 +288,7 @@ mod test {
     // Test GET for /api/post/get?get_images
     #[rocket::async_test]
     async fn get_posts_and_images() {
-        let client = crate::test::setup().await;
+        let client = setup().await;
 
         // Getting the default should return 2 published posts, no images
         let req = client.get("/api/post/get?get_images");
@@ -437,7 +438,7 @@ mod test {
     // Test OPTIONS /api/post/new
     #[rocket::async_test]
     async fn new_post_opt() {
-        let client = crate::test::setup().await;
+        let client = setup().await;
         let req = client.options("/api/post/new");
         let resp = req.dispatch().await;
         assert_eq!(resp.status().code, 200);
@@ -447,7 +448,7 @@ mod test {
     // Test that you need a user token to make a new post
     #[rocket::async_test]
     async fn new_post_unauth() {
-        let client = crate::test::setup().await;
+        let client = setup().await;
         let req = client.post("/api/post/new");
         let resp = req.dispatch().await;
         assert_eq!(resp.status().code, 401);
@@ -456,18 +457,63 @@ mod test {
     // Test sending invalid new post
     #[rocket::async_test]
     async fn new_post_invalid() {
-        let client = crate::test::setup().await;
-        let (token, _) = crate::test::login(&client).await;
+        let client = setup().await;
+        let (token, _) = login(&client).await;
 
         let mut req = client.post("/api/post/new"); 
-        let header_content = format!("Bearer {}", token);
-        req.add_header(Header::new("Authorization", header_content));
+        req.add_header(Header::new("Authorization", format!("Bearer {}", token)));
         let resp = req.dispatch().await;
 
         assert_eq!(resp.status().code, 404);
     }
 
-    // TODO: Test adding new posts
+    #[rocket::async_test]
+    async fn new_post() {
+        let client = setup().await;
+        let (token, _) = login(&client).await;
+
+        let mut req = client.post("/api/post/new");
+        req.add_header(Header::new("Authorization", format!("Bearer {}", token)));
+        req.add_header(Header::new("Content-Type", "application/x-new-post"));
+        let req = req.body(ron::to_string(&Post {
+            title: "Post 4".to_string(),
+            body: "This is post 4.".to_string(),
+            images: vec![],
+            published: false,
+            header: None,
+        }).unwrap());
+        let resp = req.dispatch().await;
+        assert_eq!(resp.status().code, 200);
+        let body = resp.into_string().await.expect("No body");
+        let resp: Result<NewPostResponse, _> = ron::from_str(&body);
+        assert!(resp.is_ok());
+
+        if let Ok(NewPostResponse::Success(id)) = resp {
+            assert_eq!(id, 4);
+        } else {
+           panic!("Failed to enter new post");
+        }
+
+        let req = client.get("/api/post/get?all");
+        let resp = req.dispatch().await;
+        assert_eq!(resp.status().code, 200);
+        let body = resp.into_string().await.expect("No body");
+        let resp: Result<Option<Vec<PostResponse>>, _> = ron::from_str(&body);
+        assert!(resp.is_ok());
+
+        if let Ok(Some(v)) = resp {
+            assert_eq!(v.len(), 4);
+            assert_eq!(v[3], PostResponse {
+                id: 4,
+                title: "Post 4".to_string(),
+                images: None,
+                published: false,
+                header: None,
+            });
+        } else {
+            panic!("No posts!");
+        }
+    }
 
     // TODO: Fuzz inputs
 }

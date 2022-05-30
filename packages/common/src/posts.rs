@@ -7,33 +7,11 @@ use rocket::{
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Post {
-    title: String,
-    body: String,
-    images: Vec<String>,
-    published: bool,
-    header: Option<String>,
-}
-
-impl Post {
-    pub fn title(&self) -> &str {
-        &self.title
-    }
-
-    pub fn body(&self) -> &str {
-        &self.body
-    }
-
-    pub fn images(&self) -> &[String] {
-        &self.images[..]
-    }
-
-    pub fn published(&self) -> bool {
-        self.published
-    }
-
-    pub fn header(&self) -> Option<String> {
-        self.header.clone()
-    }
+    pub title: String,
+    pub body: String,
+    pub images: Vec<String>,
+    pub published: bool,
+    pub header: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, Copy, PartialEq, Eq)]
