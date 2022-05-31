@@ -49,12 +49,8 @@ async fn get_posts() -> Result<Vec<PostResponse>, ()> {
     }
 
     let resp = ron::from_str::<Option<Vec<PostResponse>>>(&resp.unwrap());
-    if let Ok(resp) = resp {
-        if let Some(resp) = resp {
-            Ok(resp)
-        } else {
-            Err(())
-        }
+    if let Ok(Some(resp)) = resp {
+        Ok(resp)
     } else {
         Err(())
     }
@@ -67,7 +63,7 @@ fn Posts() -> HtmlResult {
     if let Ok(res) = &*res {
         Ok(html! {
             <ul id={"posts"}>
-                { for res.into_iter().enumerate().map(|(id, post)| {
+                { for res.iter().enumerate().map(|(id, post)| {
                     html! { <li key={id}><PostView content={post.clone()} /></li> }
                 }) }
                 <li>{"Test content"}</li>
@@ -83,7 +79,7 @@ fn Posts() -> HtmlResult {
     }
 }
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Eq)]
 struct ViewProps {
     pub content: PostResponse,
 }

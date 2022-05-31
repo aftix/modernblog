@@ -7,7 +7,7 @@ use std::rc::Rc;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Eq, Default, Clone, Debug)]
 pub struct Authentication {
     pub(crate) jwt: Option<AuthToken>,
     pub(crate) claim: Option<Claim>,
@@ -36,7 +36,7 @@ impl Reducible for Authentication {
 
 pub type AuthenticationCtx = UseReducerHandle<Authentication>;
 
-#[derive(Clone, Routable, PartialEq, Copy)]
+#[derive(Clone, Routable, PartialEq, Eq, Copy)]
 pub enum Route {
     #[at("/")]
     Login,

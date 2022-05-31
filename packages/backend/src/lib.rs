@@ -19,9 +19,12 @@ use rocket::{
     Data, Request, Rocket, Build
 };
 use rand::{Rng, SeedableRng};
+use std::collections::HashSet;
+use std::sync::RwLock;
 
 pub mod auth;
 pub mod posts;
+pub mod img;
 mod schema;
 mod sql;
 mod util;
@@ -53,6 +56,7 @@ impl Fairing for CORS {
 }
 
 pub struct SessionSecret(pub String);
+pub struct ImageSet(HashSet<String>, bool);
 
 #[cfg(not(any(test, fuzzing)))]
 #[database("blog")]
@@ -66,9 +70,11 @@ pub fn rocket() -> Rocket<Build> {
     dotenvy::dotenv().ok();
 
     let mut rng = rand_chacha::ChaChaRng::from_entropy();
-    let secret: SessionSecret = SessionSecret(Rng::gen::<u128>(&mut rng).to_string());
+    let secret = SessionSecret(Rng::gen::<u128>(&mut rng).to_string());
+    let images = RwLock::new(ImageSet(HashSet::new(), false));
     rocket::build()
         .manage(secret)
+        .manage(images)
         .attach(CORS)
         .attach(SQLite::fairing())
         .mount(
@@ -82,6 +88,8 @@ pub fn rocket() -> Rocket<Build> {
                 posts::newpost,
                 posts::get_opt,
                 posts::get,
+                img::new_image_opt,
+                img::new_image,
             ],
         )
 }

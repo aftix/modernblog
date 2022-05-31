@@ -11,7 +11,7 @@ use yew::prelude::*;
 use yew::{props, suspense::use_future};
 use yew_router::prelude::*;
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Eq)]
 pub struct Pass {
     pub pass: String,
 }

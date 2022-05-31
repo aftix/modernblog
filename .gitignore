@@ -5,3 +5,4 @@ data.db
 password
 .vscode
 packages/backend/.env
+img/
