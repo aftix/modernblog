@@ -31,6 +31,16 @@ jobs:
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
 
+        run: |
+          cargo clippy --all-targets -- --deny=warnings
+          cargo clippy --all-features --all-targets -- --deny=warnings
+        working-directory: packages/writer
+
+        run: |
+          cargo clippy --all-targets -- --deny=warnings
+          cargo clippy --all-features --all-targets -- --deny=warnings
+        working-directory: packages/common
+
   clippy-release:
     name: Clippy release
     runs-on: ubuntu-latest
@@ -55,6 +65,17 @@ jobs:
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
+
+        run: |
+          cargo clippy --all-targets -- --deny=warnings
+          cargo clippy --all-features --all-targets -- --deny=warnings
+        working-directory: packages/writer
+
+        run: |
+          cargo clippy --all-targets -- --deny=warnings
+          cargo clippy --all-features --all-targets -- --deny=warnings
+        working-directory: packages/common
+
 
   writer-test:
     name: Writer test
