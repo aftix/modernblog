@@ -31,11 +31,13 @@ jobs:
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
 
+      - name: Lint Writer
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
         working-directory: packages/writer
 
+      - name: Lint common
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
@@ -66,11 +68,13 @@ jobs:
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
 
+      - name: Lint writer
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
         working-directory: packages/writer
 
+      - name: Lint common
         run: |
           cargo clippy --all-targets -- --deny=warnings
           cargo clippy --all-features --all-targets -- --deny=warnings
