@@ -1,9 +1,9 @@
-use crate::{ImageSet, SQLite, sql, IMG_DIR};
-use rocket::State;
 use crate::util::{Ron, User};
-use common::img::{ImageResponse, ImageRequest};
-use rand::Rng;
+use crate::{sql, ImageSet, SQLite, IMG_DIR};
+use common::img::{ImageRequest, ImageResponse};
 use diesel::prelude::*;
+use rand::Rng;
+use rocket::State;
 use std::fs::{create_dir, write};
 use std::path::Path;
 use std::sync::RwLock;
@@ -14,23 +14,29 @@ pub fn new_image_opt() -> &'static str {
 }
 
 #[post("/img/new", data = "<req>")]
-pub async fn new_image(_user: User, imgset: &State<RwLock<ImageSet>>, conn: SQLite, req: ImageRequest) -> Ron<ImageResponse> {
+pub async fn new_image(
+    _user: User,
+    imgset: &State<RwLock<ImageSet>>,
+    conn: SQLite,
+    req: ImageRequest,
+) -> Ron<ImageResponse> {
     use crate::schema::images::dsl::*;
 
     let read_in = imgset.read().expect("Failed to get read lock").1;
-    
+
     // Populate the ImageSet HashSet if it has not been done
     if !read_in {
-        let imgs = conn.run(|c| images.filter(name.ne("")).load::<sql::Image>(c)).await;
+        let imgs = conn
+            .run(|c| images.filter(name.ne("")).load::<sql::Image>(c))
+            .await;
 
         let mut writer = imgset.write().expect("Failed to get write lock");
         writer.1 = true;
 
-
         if let Ok(imgs) = imgs {
             imgs.into_iter().for_each(|img| {
                 writer.0.insert(img.name);
-            }); 
+            });
         }
     }
 
@@ -69,8 +75,8 @@ pub async fn new_image(_user: User, imgset: &State<RwLock<ImageSet>>, conn: SQLi
 #[cfg(test)]
 mod test {
     use crate::test::{login, setup};
-    use rocket::http::{ContentType, Header};
     use common::img::{ImageRequest, ImageResponse};
+    use rocket::http::{ContentType, Header};
 
     #[rocket::async_test]
     async fn new_img_opt() {
@@ -107,10 +113,13 @@ mod test {
         let mut req = client.post("/api/img/new");
         req.add_header(ContentType::new("application", "x-new-image"));
         req.add_header(Header::new("Authorization", format!("Bearer {}", token)));
-        let req = req.body(ron::to_string(&ImageRequest {
-            data: vec![],
-            extension: "png".to_string(),
-        }).expect("Failed to serialize"));
+        let req = req.body(
+            bson::to_vec(&ImageRequest {
+                data: vec![],
+                extension: "png".to_string(),
+            })
+            .expect("Failed to serialize"),
+        );
 
         let resp = req.dispatch().await;
         assert_eq!(resp.status().code, 200);
@@ -119,7 +128,6 @@ mod test {
 
         let resp: Result<ImageResponse, _> = ron::from_str(&body);
         if let Ok(ImageResponse::Success(_)) = resp {
-
         } else {
             panic!("Bad Response");
         }

@@ -29,13 +29,13 @@ impl<'r> FromData<'r> for ImageRequest {
             .get("x-new-image")
             .unwrap_or_else(|| (4_000_000_usize).bytes());
 
-        let string = match data.open(limit).into_string().await {
-            Ok(string) if string.is_complete() => string.into_inner(),
+        let bytes = match data.open(limit).into_bytes().await {
+            Ok(bytes) if bytes.is_complete() => bytes.into_inner(),
             Ok(_) => return Failure((Status::PayloadTooLarge, String::new())),
             Err(err) => return Failure((Status::InternalServerError, err.to_string())),
         };
 
-        let ret = ron::de::from_str::<ImageRequest>(&string);
+        let ret = bson::from_slice(&bytes[..]);
         if let Ok(ret) = ret {
             Success(ret)
         } else {

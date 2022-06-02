@@ -17,8 +17,9 @@ rand_chacha = "~0.3"
 serde = "~1.0"
 ron = "~0.7"
 dotenvy = "~0.15"
-diesel_migrations = {version="~1.4", optional=true}
+diesel_migrations = { version = "~1.4", optional = true }
 random-string = "~1.0"
+bson = "~2.2"
 
 [dev-dependencies]
 diesel_migrations = "~1.4"

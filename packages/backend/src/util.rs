@@ -14,6 +14,11 @@ pub struct Ron<T: Serialize + Debug> {
     inner: T,
 }
 
+#[derive(Debug, Serialize)]
+pub struct Bson<T: Serialize + Debug> {
+    inner: T,
+}
+
 impl<T: Serialize + Debug> Ron<T> {
     pub fn new(inner: T) -> Self {
         Self { inner }
@@ -31,6 +36,21 @@ impl<'r, 'o: 'r, T: Serialize + Debug> Responder<'r, 'o> for Ron<T> {
         Ok(Response::build()
             .header(ContentType::Plain)
             .sized_body(text.len(), Cursor::new(text))
+            .finalize())
+    }
+}
+
+impl<'r, 'o: 'r, T: Serialize + Debug> Responder<'r, 'o> for Bson<T> {
+    fn respond_to(self, _req: &'r Request<'_>) -> Result<'o> {
+        let body = bson::to_vec(&self.inner);
+
+        if body.is_err() {
+            return Err(Status::UnprocessableEntity);
+        }
+        let body = body.unwrap();
+        Ok(Response::build()
+            .header(ContentType::Plain)
+            .sized_body(body.len(), Cursor::new(body))
             .finalize())
     }
 }
