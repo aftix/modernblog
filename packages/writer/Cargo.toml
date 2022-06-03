@@ -15,9 +15,18 @@ ron = "~0.7"
 serde = { version = "~1.0", features = ["derive"] }
 wasm-bindgen-futures = "~0.4"
 web-log = "~1.0"
+bson = { version = "~2.0", path = "./bson-rust" }
 
 [dev-dependencies]
 wasm-bindgen-test = "~0.3"
 
 [build-dependencies]
 dotenvy = "~0.15"
+
+[dependencies.getrandom]
+features = ["js"]
+version = "~0.2"
+
+[dependencies.uuid]
+version = "~1.1"
+features = ["v4", "js"]
