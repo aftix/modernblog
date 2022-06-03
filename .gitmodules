@@ -1,5 +1,3 @@
 [submodule "packages/writer/bson-rust"]
 	path = packages/writer/bson-rust
-	url = https://github.com/mongodb/bson-rust
-[submodule "bson-rust"]
 	url = https://github.com/aftix/bson-rust
