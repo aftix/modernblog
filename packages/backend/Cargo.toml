@@ -19,13 +19,16 @@ ron = "~0.7"
 dotenvy = "~0.15"
 diesel_migrations = { version = "~1.4", optional = true }
 random-string = "~1.0"
-bson = "~2.2"
 
 [dev-dependencies]
 diesel_migrations = "~1.4"
 
 [features]
 fuzzing = ["diesel_migrations"]
+
+[dependencies.bson]
+git = "https://github.com/aftix/bson-rust"
+version = "=2.0.0"
 
 [dependencies.rocket_sync_db_pools]
 version = "0.1.0-rc.2"

@@ -13,4 +13,7 @@ serde = { version = "~1.0", features = ["derive"] }
 jsonwebtoken = "~7.2"
 rocket = { git = "https://github.com/SergioBenitez/Rocket", version = "0.5.0-rc.2", optional = true }
 ron = "~0.7"
-bson = "~2.2"
+
+[dependencies.bson]
+git = "https://github.com/aftix/bson-rust"
+version = "=2.0.0"
